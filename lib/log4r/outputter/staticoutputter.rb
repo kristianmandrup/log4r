@@ -7,12 +7,14 @@ module Log4r
     out = @@outputters[name]
       if out.nil?
         return case name
+        when 'color'  then ColorOutputter.new 'color'
         when 'stdout' then StdoutOutputter.new 'stdout'
         when 'stderr' then StderrOutputter.new 'stderr'
         else nil end
       end          
       out
     end
+    def self.color;  Outputter['color'] end
     def self.stdout; Outputter['stdout'] end
     def self.stderr; Outputter['stderr'] end
     # Set an outputter.

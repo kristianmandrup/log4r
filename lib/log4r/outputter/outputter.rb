@@ -16,7 +16,7 @@ require 'monitor'
 module Log4r
 
   class Outputter < Monitor
-    attr_reader :name, :level, :formatter
+    attr_reader :name, :level, :formatter, :colors
     @@outputters = Hash.new
 
     # An Outputter needs a name. RootLogger will be loaded if not already
@@ -56,6 +56,10 @@ module Log4r
       }
     end
 
+    def level_key lv
+      Log4rTools.level_key(lv)
+    end
+
     # Dynamically change the formatter. You can just specify a Class
     # object and the formatter will invoke +new+ or +instance+
     # on it as appropriate.
@@ -73,6 +77,13 @@ module Log4r
         raise TypeError, "Argument was not a Formatter!", caller
       end
       Logger.log_internal {"Outputter '#{@name}' using #{@formatter.class}"}
+    end
+
+    # dynamically change the level
+    def colors=(_colors)
+      Log4rTools.validate_colors(_colors)
+      @colors = _colors
+      Logger.log_internal {"Outputter '#{@name}' colors is #{colors}"}
     end
 
     # Call flush to force an outputter to write out any buffered
@@ -95,7 +106,8 @@ module Log4r
         return
       end
       self.level = (hash[:level] or hash['level'] or Logger.root.level)
-      self.formatter = (hash[:formatter] or hash['formatter'] or DefaultFormatter.new)
+      self.formatter = (hash[:formatter] or hash['formatter'] or DefaultFormatter.new) 
+      self.colors = hash[:colors] if hash[:colors]
     end
 
     #######

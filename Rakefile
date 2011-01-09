@@ -10,7 +10,7 @@ require 'date'
 require 'fileutils'
 
 GEM = "log4r"
-GEM_VERSION = "1.1.10"
+GEM_VERSION = "1.1.11"
 AUTHOR = "Colby Gutierrez-Kraybill"
 EMAIL = "colby@astro.berkeley.edu"
 HOMEPAGE = %q{http://log4r.rubyforge.org}
@@ -33,6 +33,7 @@ spec = spec = Gem::Specification.new do |s|
 
   # Uncomment this to add a dependency
   s.add_dependency "scribe"
+  s.add_dependency "colorize"
 
   s.require_path = 'lib'
   s.files = %w(LICENSE LICENSE.LGPLv3 README INSTALL Rakefile TODO)
@@ -45,9 +46,14 @@ Rake::GemPackageTask.new(spec) do |pkg|
   pkg.gem_spec = spec
 end
 
+desc "sudo install the gem locally"
+task :sudo_install => [:package] do
+  sh %{sudo gem install pkg/#{GEM}-#{GEM_VERSION}}
+end
+
 desc "install the gem locally"
 task :install => [:package] do
-  sh %{sudo gem install pkg/#{GEM}-#{GEM_VERSION}}
+  sh %{gem install pkg/#{GEM}-#{GEM_VERSION}}
 end
 
 desc "create a gemspec file"
